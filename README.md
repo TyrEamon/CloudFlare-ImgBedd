@@ -15,8 +15,8 @@
         <img src="https://img.shields.io/github/downloads/MarSeventh/CloudFlare-ImgBed/total?color=%239F7AEA&logo=github" alt="Downloads" />
         </a>
         <a href="https://hub.docker.com/r/marseventh/cloudflare-imgbed">
-  		  <img src="https://img.shields.io/docker/pulls/marseventh/cloudflare-imgbed?style=flat-square" alt="Docker Pulls" />
-		</a>
+            <img src="https://img.shields.io/docker/pulls/marseventh/cloudflare-imgbed?style=flat-square" alt="Docker Pulls" />
+        </a>
         <a href="https://github.com/MarSeventh/CloudFlare-ImgBed/issues">
           <img src="https://img.shields.io/github/issues/MarSeventh/CloudFlare-ImgBed" alt="Issues" />
         </a>
@@ -116,6 +116,8 @@
 # 4. Tips
 
 - **前端开源**：参见[MarSeventh/Sanyue-ImgHub](https://github.com/MarSeventh/Sanyue-ImgHub)项目。
+
+- **背景图配置指南**：查看[背景图修改指南](BACKGROUND_IMAGE_GUIDE.md)了解如何自定义背景图。
 
 - **生态建设**：欢迎社区参与生态建设，欢迎提交 PR 或者 Issue，优质内容参见[官网生态建设页面](https://cfbed.sanyue.de/about/ecosystem.html)。
 
