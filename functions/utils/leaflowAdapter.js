@@ -22,15 +22,24 @@ export class LeaflowAdapter {
     }
 
     async put(key, value, options = {}) {
-        const body = {
-            value,
-            metadata: options.metadata || undefined
-        };
+        const metadata = options.metadata || undefined;
+        const isBinary = value instanceof ArrayBuffer || ArrayBuffer.isView(value) || value instanceof Blob;
+
+        const headers = isBinary
+            ? this.buildHeaders({
+                'Content-Type': 'application/octet-stream',
+                ...(metadata ? { 'X-Metadata': JSON.stringify(metadata) } : {})
+            })
+            : this.buildHeaders();
+
+        const body = isBinary
+            ? (value instanceof ArrayBuffer ? new Uint8Array(value) : value)
+            : JSON.stringify({ value, metadata });
 
         const res = await fetch(`${this.apiBase}/kv/${encodeURIComponent(key)}`, {
             method: 'PUT',
-            headers: this.buildHeaders(),
-            body: JSON.stringify(body)
+            headers,
+            body
         });
 
         if (!res.ok) {
