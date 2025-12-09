@@ -4,6 +4,7 @@
  */
 
 import { D1Database } from './d1Database.js';
+import { LeaflowAdapter } from './leaflowAdapter.js';
 
 /**
  * 创建数据库适配器
@@ -11,6 +12,11 @@ import { D1Database } from './d1Database.js';
  * @returns {Object} 数据库适配器实例
  */
 export function createDatabaseAdapter(env) {
+    // 优先使用 Leaflow 容器 API，减少 KV 写入限制
+    if (env.LEAFLOW_API) {
+        return new LeaflowAdapter(env.LEAFLOW_API, env.LEAFLOW_TOKEN);
+    }
+
     // 检查是否配置了数据库
     if (env.img_url && typeof env.img_url.get === 'function') {
         // 使用KV存储
@@ -19,7 +25,7 @@ export function createDatabaseAdapter(env) {
         // 使用D1数据库
         return new D1Database(env.img_d1);
     } else {
-        console.error('No database configured. Please configure either KV (env.img_url) or D1 (env.img_d1).');
+        console.error('No database configured. Please configure Leaflow API (env.LEAFLOW_API), KV (env.img_url) or D1 (env.img_d1).');
         return null;
     }
 }
@@ -148,7 +154,7 @@ class KVAdapter {
 export function getDatabase(env) {
     var adapter = createDatabaseAdapter(env);
     if (!adapter) {
-        throw new Error('Database not configured. Please configure D1 database (env.img_d1) or KV storage (env.img_url).');
+        throw new Error('Database not configured. Please configure Leaflow API (env.LEAFLOW_API), D1 database (env.img_d1) or KV storage (env.img_url).');
     }
     return adapter;
 }
@@ -161,12 +167,15 @@ export function getDatabase(env) {
 export function checkDatabaseConfig(env) {
     var hasD1 = env.img_d1 && typeof env.img_d1.prepare === 'function';
     var hasKV = env.img_url && typeof env.img_url.get === 'function';
+    var hasLeaflow = !!env.LEAFLOW_API;
 
     return {
         hasD1: hasD1,
         hasKV: hasKV,
-        usingD1: hasD1,
-        usingKV: !hasD1 && hasKV,
-        configured: hasD1 || hasKV
+        hasLeaflow: hasLeaflow,
+        usingLeaflow: hasLeaflow,
+        usingD1: !hasLeaflow && hasD1,
+        usingKV: !hasLeaflow && !hasD1 && hasKV,
+        configured: hasLeaflow || hasD1 || hasKV
     };
 }
